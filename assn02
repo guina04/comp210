@@ -1,0 +1,146 @@
+package assn02;
+
+import java.util.Scanner;
+public class JavaWarmUp {
+    public static void main(String[] args) {
+        Scanner devInfo = new Scanner(System.in);
+        System.out.println("How many batches you would like to enter?");
+        int num = devInfo.nextInt();
+        String input = devInfo.nextLine();
+        String[] dates = new String[num];
+        String[] hours = new String[num];
+        String[] categories = new String[num];
+        String[] fees = new String[num];
+        String[] quantities = new String[num];
+        String[] times = new String[num];
+        String[] costs = new String[num];
+        int i = 0;
+        while (i < num) {
+            input = devInfo.nextLine();
+            String[] deviceRecord = input.split(" ");
+            dates[i] = deviceRecord[0];
+            hours[i] = deviceRecord[1];
+            categories[i] = deviceRecord[2];
+            fees[i] = deviceRecord[3];
+            quantities[i] = deviceRecord[4];
+            times[i] = deviceRecord[5];
+            costs[i] = deviceRecord[6];
+            i += 1;
+        }
+        int maxPriceIndex = getMaxPriceIndex(fees);
+        System.out.println("Highest per unit assembling fee:");
+        System.out.println("\t When: " + dates[maxPriceIndex] + " " + times[maxPriceIndex]);
+        System.out.println("\t Category: " + categories[maxPriceIndex]);
+        System.out.println("\t Price: " + fees[maxPriceIndex]);
+
+        int minPriceIndex = getMinPriceIndex(fees);
+        System.out.println("Lowest per unit assembling fee:");
+        System.out.println("\t When: " + dates[minPriceIndex] + " " + times[minPriceIndex]);
+        System.out.println("\t Category: " + categories[minPriceIndex]);
+        System.out.println("\t Price: " + fees[minPriceIndex]);
+
+        int[] phoneIndices = sortingDevices(categories, "phone");
+        int totalPhones = totalDevices(quantities, phoneIndices);
+        float averagePhoneFee = averageFee(fees, quantities, phoneIndices);
+        float averagePhoneProfit = averageProfit(fees, quantities, times, costs, phoneIndices);
+        System.out.println("Statistic of phone");
+        System.out.println("\t Quantity: " + totalPhones);
+        System.out.println("\t Average Assembling fee: " + averagePhoneFee);
+        System.out.println("\t Average Net Profit: " + averagePhoneProfit);
+
+        int[] laptopIndices = sortingDevices(categories, "laptop");
+        int totalLaptops = totalDevices(quantities, phoneIndices);
+        float averageLaptopFee = averageFee(fees, quantities, phoneIndices);
+        float averageLaptopProfit = averageProfit(fees, quantities, times, costs, phoneIndices);
+        System.out.println("Statistic of laptop");
+        System.out.println("\t Quantity: " + totalLaptops);
+        System.out.println("\t Average Assembling fee: " + averageLaptopFee);
+        System.out.println("\t Average Net Profit: " + averageLaptopProfit);
+
+        int[] smartWatchIndices = sortingDevices(categories, "smart_watch");
+        int totalWatches = totalDevices(quantities, phoneIndices);
+        float averageWatchFee = averageFee(fees, quantities, phoneIndices);
+        float averageWatchProfit = averageProfit(fees, quantities, times, costs, phoneIndices);
+        System.out.println("Statistic of smart_watch");
+        System.out.println("\t Quantity: " + totalWatches);
+        System.out.println("\t Average Assembling fee: " + averageWatchFee);
+        System.out.println("\t Average Net Profit: " + averageWatchProfit);
+    }
+    public static int getMaxPriceIndex(String[] fees) {
+        float maxPrice = Float.parseFloat(fees[0]);
+        int maxPriceIndex = 0;
+        for (int i = 1; i < fees.length; i++) {
+            float nextPrice = Float.parseFloat(fees[i]);
+            if (nextPrice > maxPrice) {
+                maxPrice = nextPrice;
+                maxPriceIndex = i;
+            }
+         }
+         return maxPriceIndex;
+    }
+    public static int getMinPriceIndex(String[] fees) {
+        float minPrice = Float.parseFloat(fees[0]);
+        int minPriceIndex = 0;
+        for (int i = 1; i < fees.length; i++) {
+            float nextPrice = Float.parseFloat(fees[i]);
+            if (nextPrice < minPrice){
+                minPrice = nextPrice;
+                minPriceIndex = i;
+            }
+        }
+        return minPriceIndex;
+    }
+    public static int[] sortingDevices(String[] categories, String device) {
+        int[] deviceIndices = new int[categories.length];
+        int counter = 0;
+        for (int i = 0; i < categories.length; i++) {
+            if (categories[i].equals(device)) {
+                deviceIndices[counter] = i;
+                counter += 1;
+            }
+        }
+        return deviceIndices;
+    }
+    public static int totalDevices(String[] quantities, int[] devices) {
+        int totalQuantity = 0;
+        for (int i = 0; i < devices.length; i++){
+            int currentQuantity = Integer.parseInt(quantities[i]);
+            totalQuantity += currentQuantity;
+        }
+        return totalQuantity;
+    }
+    public static float averageFee(String[] fees, String[] quantities, int[] devices) {
+        float averageAssemblyFee = 0;
+        float totalBatchFees = 0;
+        int totalQuantity = 0;
+        for (int i = 0; i < devices.length; i++) {
+            float currentFee = Float.parseFloat(fees[i]);
+            int currentQuantity = Integer.parseInt(quantities[i]);
+            totalBatchFees += (currentFee * currentQuantity);
+            totalQuantity += currentQuantity;
+        }
+        averageAssemblyFee = (totalBatchFees / totalQuantity);
+        float finalAverageAssemblyFee = (float) Math.round(averageAssemblyFee * 100) / 100;
+        return finalAverageAssemblyFee;
+    }
+    public static float averageProfit(String[] fees, String[] quantities, String[] times, String[] costs, int[] devices) {
+        float averageNetProfit = 0;
+        float totalAssemblyFee = 0;
+        float totalCost = 0;
+        float totalTime = 0;
+        int totalQuantity = 0;
+        for (int i = 0; i < devices.length; i++) {
+            float currentFee = Float.parseFloat(fees[i]);
+            int currentQuantity = Integer.parseInt(quantities[i]);
+            float currentTime = Float.parseFloat(times[i]);
+            int currentCost = Integer.parseInt(costs[i]);
+            totalAssemblyFee += (currentFee * currentQuantity);
+            totalQuantity += currentQuantity;
+            totalTime += currentTime;
+            totalCost += currentCost;
+        }
+        averageNetProfit = (totalAssemblyFee - (totalCost + (totalTime * 16))) / totalQuantity;
+        float finalAverageNetProfit = (float) Math.round(averageNetProfit * 100) / 100;
+        return finalAverageNetProfit;
+    }
+}
